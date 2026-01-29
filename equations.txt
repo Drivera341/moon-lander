@@ -1,0 +1,57 @@
+// compile time constants
+CONSTEXPR double G = 6.67430E-11 m^3 kg^-1 s^-2
+CONSTEXPR unsigned long long MOON_RADIUS = 1.74 * 10E6
+CONSTEXPR long EMPTY_LANDER_MASS
+CONSTEXPR unsigned STARTING_FUEL_MASS
+CONSTEXPR unsigned STARTING_HEIGHT
+CONSTEXPR unsigned long THRUST_REQUIRED_FUEL_MASS = 10
+CONSTEXPR unsigned long THRUST_FORCE = 1000 N
+
+// user input
+bool isThrusterActivated
+
+
+// read from db
+unsigned long previousLanderMass
+long previousVelocity
+long previousHeight
+
+
+// intermediary
+double moonGravity = (G * MOON_MASS) / pow(MOON_RADIUS + landerHeight, 2)
+
+netForce =
+    isThrusterActivated * THRUST_FORCE
+    - moonGravity * previousLanderMass
+
+
+// write to db
+long currentVelocity =
+    previousVelocity + netAverageAcceleration * deltaT
+
+long acceleration =
+    netForce / (previousLanderMass - 0.5 * thrustRequiredFuelMass)
+
+currentHeight =
+    previousHeight
+    - previousVelocity * deltaT
+    - 0.5 * netAverageAcceleration * deltaT^2
+
+unsigned long currentLanderMass =
+    previousLanderMass
+    - isThrusterActivated * THRUST_REQUIRED_FUEL_MASS
+
+long long timeUntilLanding = "some complicated formula"
+
+
+/*
+Unknowns
+    Landing scenarios
+        - Lander only with some instruments
+        - Lander with Rover for experiments
+        - Lander with 1 and 2 astronauts
+    Parachute
+    Is input sent directly to calculator or does it need to be read from db?
+    How does the client server architecture work?
+    How is a crash landing indicated?
+*/
