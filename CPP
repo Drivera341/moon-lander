@@ -1,1 +1,59 @@
 //CPP code will go here
+#include <iostream>
+
+struct LanderState {
+    double altitude;   // meters
+    double velocity;   // m/s (up positive)
+    double fuel;       // fuel units
+    bool   landed;
+    bool   crashed;
+};
+
+struct LanderConfig {
+    double gravity = 1.62;      // moon gravity (m/s^2)
+    double maxThrust = 4.0;     // max upward acceleration (m/s^2)
+    double fuelBurnRate = 0.5;  // units per second
+    double safeLandingSpeed = 2.0; // m/s
+};
+
+void updateLander(
+    LanderState& state,
+    const LanderConfig& config,
+    double thrustPercent,  // 0.0 → 1.0
+    double dt
+) {
+    if (state.landed || state.crashed)
+        return;
+
+    // Clamp thrust
+    if (thrustPercent < 0) thrustPercent = 0;
+    if (thrustPercent > 1) thrustPercent = 1;
+
+    double acceleration = -config.gravity;
+
+    if (state.fuel > 0 && thrustPercent > 0) {
+        double thrustAccel = config.maxThrust * thrustPercent;
+        acceleration += thrustAccel;
+
+        state.fuel -= config.fuelBurnRate * thrustPercent * dt;
+        if (state.fuel < 0) state.fuel = 0;
+    }
+
+    // Integrate (Euler)
+    state.velocity += acceleration * dt;
+    state.altitude += state.velocity * dt;
+
+    // Ground collision
+    if (state.altitude <= 0) {
+        state.altitude = 0;
+
+        if (std::abs(state.velocity) <= config.safeLandingSpeed) {
+            state.landed = true;
+        }
+        else {
+            state.crashed = true;
+        }
+
+        state.velocity = 0;
+    }
+}
